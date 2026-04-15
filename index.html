@@ -40,13 +40,36 @@
             padding: 25px;
             border-radius: 20px;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 15px rgba(37, 117, 252, 0.3);
         }
 
         .balance-card p { margin: 0; opacity: 0.9; font-size: 0.9em; }
         .balance-card h2 { margin: 5px 0 0; font-size: 2.2em; letter-spacing: 1px; font-weight: 600; }
 
+        /* Statistik Box */
+        .stats-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stats-box {
+            flex: 1;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stats-add { background: #e8f5e9; border-color: #c8e6c9; }
+        .stats-draw { background: #ffebee; border-color: #ffcdd2; }
+
+        .stats-box strong { display: block; margin-bottom: 8px; text-align: center; font-size: 1.1em; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+        .stat-row span:last-child { font-weight: 600; }
+
+        /* Form Styling */
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
         
@@ -76,12 +99,14 @@
             font-weight: 600;
             transition: 0.3s;
             font-size: 1em;
+            color: white;
         }
 
-        .btn-add { background: #2ecc71; color: white; }
-        .btn-withdraw { background: #e74c3c; color: white; }
+        .btn-add { background: #2ecc71; }
+        .btn-withdraw { background: #e74c3c; }
         button:active { transform: scale(0.95); }
 
+        /* History Styling */
         .history-section { 
             margin-top: 30px; 
             padding-top: 20px;
@@ -133,6 +158,19 @@
         <h2 id="total-saldo">Rp 0</h2>
     </div>
 
+    <div class="stats-container">
+        <div class="stats-box stats-add">
+            <strong style="color: #2e7d32;">Total Menabung</strong>
+            <div class="stat-row"><span>Refki:</span> <span id="add-refki">Rp 0</span></div>
+            <div class="stat-row"><span>Intan:</span> <span id="add-intan">Rp 0</span></div>
+        </div>
+        <div class="stats-box stats-draw">
+            <strong style="color: #c62828;">Total Ditarik</strong>
+            <div class="stat-row"><span>Refki:</span> <span id="draw-refki">Rp 0</span></div>
+            <div class="stat-row"><span>Intan:</span> <span id="draw-intan">Rp 0</span></div>
+        </div>
+    </div>
+
     <div class="form-group">
         <label>Nama Penginput</label>
         <select id="user">
@@ -143,12 +181,12 @@
 
     <div class="form-group">
         <label>Nominal (Rp)</label>
-        <input type="number" id="amount" placeholder="Contoh: 100000">
+        <input type="number" id="amount" placeholder="Contoh: 50000">
     </div>
 
     <div class="form-group">
         <label>Alasan / Keperluan</label>
-        <textarea id="note" rows="2" placeholder="Nabung sisa gaji / beli hadiah"></textarea>
+        <textarea id="note" rows="2" placeholder="Nabung jajan / beli bakso"></textarea>
     </div>
 
     <div class="btn-group">
@@ -157,16 +195,16 @@
     </div>
 
     <div class="history-section">
-        <h3 style="margin-bottom: 15px; font-size: 1.1em; color: #d63384;">Semua Riwayat Transaksi</h3>
-        <div id="history-list">
-            </div>
+        <h3 style="margin-bottom: 15px; font-size: 1.1em; color: #d63384;">Riwayat Transaksi</h3>
+        <div id="history-list"></div>
     </div>
 </div>
 
 <script>
+    // GANTI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
     const SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbzTYVLwoHvHeefAze2bxMzMbYkgJiQ2uj-18elNpg_YhbS_ep882REAMLf_Cz4JM7pt/exec";
-    // <--- GANTI DENGAN URL APPS SCRIPT ANDA
+    
     let ALL_DATA = [];
 
     async function processData(tipe) {
@@ -213,51 +251,60 @@
             document.getElementById('note').value = '';
             await loadData();
         } catch (error) {
-            alert("Koneksi gagal! Pastikan URL Apps Script sudah benar.");
+            alert("Gagal terhubung ke database!");
         } finally {
             loader.style.display = "none";
         }
     }
 
     async function loadData() {
-        const historyList = document.getElementById('history-list');
         try {
             const response = await fetch(SCRIPT_URL);
             ALL_DATA = await response.json();
-            
-            if (!ALL_DATA || ALL_DATA.length <= 1) {
-                historyList.innerHTML = '<p style="text-align:center; color:#999; font-size:0.9em; margin-top:20px;">Belum ada riwayat transaksi.</p>';
-                document.getElementById('total-saldo').innerText = "Rp 0";
-                return;
-            }
-
-            updateBalanceAndHistory();
+            updateUI();
         } catch (error) {
             console.error("Gagal load data");
-            historyList.innerHTML = '<p style="text-align:center; color:red;">Gagal memuat data dari Spreadsheet.</p>';
+            document.getElementById('history-list').innerHTML = '<p style="text-align:center; color:red;">Gagal memuat data.</p>';
         }
     }
 
-    function updateBalanceAndHistory() {
-        let total = 0;
-        let html = '';
-        const listDiv = document.getElementById('history-list');
+    function updateUI() {
+        let totalSaldo = 0;
+        let addRefki = 0, addIntan = 0;
+        let drawRefki = 0, drawIntan = 0;
+        let htmlHistory = '';
 
-        // Loop dari data terbaru ke terlama (Urutan Terbalik)
+        if (!ALL_DATA || ALL_DATA.length <= 1) {
+            document.getElementById('history-list').innerHTML = '<p style="text-align:center; color:#999; font-size:0.9em;">Belum ada riwayat.</p>';
+            return;
+        }
+
+        // Hitung total saldo dari urutan normal (awal ke akhir)
+        for (let i = 1; i < ALL_DATA.length; i++) {
+            const [tgl, nama, tipe, jumlah, alasan] = ALL_DATA[i];
+            const nominal = parseInt(jumlah) || 0;
+
+            if (tipe === "Masuk") {
+                totalSaldo += nominal;
+                if (nama === "Refki") addRefki += nominal;
+                else if (nama === "Intan") addIntan += nominal;
+            } else {
+                totalSaldo -= nominal;
+                if (nama === "Refki") drawRefki += nominal;
+                else if (nama === "Intan") drawIntan += nominal;
+            }
+        }
+
+        // Generate Riwayat dari data terbaru (akhir ke awal)
         for (let i = ALL_DATA.length - 1; i > 0; i--) {
             const [tgl, nama, tipe, jumlah, alasan] = ALL_DATA[i];
             const nominal = parseInt(jumlah) || 0;
 
-            // Hitung Saldo (dari seluruh data, bukan cuma yang tampil)
-            // Namun karena kita loop terbalik, kalkulasi total dilakukan di loop terpisah atau sekalian di sini
-            if (tipe === "Masuk") total += nominal;
-            else total -= nominal;
-
-            html += `
+            htmlHistory += `
                 <div class="history-item ${tipe === 'Masuk' ? 'type-masuk' : 'type-keluar'}">
                     <div class="item-info">
                         <strong>${alasan}</strong>
-                        <span>Oleh: ${nama} • ${tgl}</span>
+                        <span>${nama} • ${tgl}</span>
                     </div>
                     <div class="item-amount" style="color: ${tipe === 'Masuk' ? '#2ecc71' : '#e74c3c'}">
                         ${tipe === 'Masuk' ? '+' : '-'} ${formatRupiah(nominal)}
@@ -266,17 +313,13 @@
             `;
         }
 
-        // Karena loop terbalik untuk tampilan, kita hitung ulang total dengan urutan benar
-        let saldoBenar = 0;
-        for (let i = 1; i < ALL_DATA.length; i++) {
-            const t = ALL_DATA[i][2];
-            const j = parseInt(ALL_DATA[i][3]) || 0;
-            if (t === "Masuk") saldoBenar += j;
-            else saldoBenar -= j;
-        }
-
-        document.getElementById('total-saldo').innerText = formatRupiah(saldoBenar);
-        listDiv.innerHTML = html;
+        // Tampilkan ke layar
+        document.getElementById('total-saldo').innerText = formatRupiah(totalSaldo);
+        document.getElementById('add-refki').innerText = formatRupiah(addRefki);
+        document.getElementById('add-intan').innerText = formatRupiah(addIntan);
+        document.getElementById('draw-refki').innerText = formatRupiah(drawRefki);
+        document.getElementById('draw-intan').innerText = formatRupiah(drawIntan);
+        document.getElementById('history-list').innerHTML = htmlHistory;
     }
 
     function formatRupiah(angka) {
@@ -289,3 +332,4 @@
 
 </body>
 </html>
+
