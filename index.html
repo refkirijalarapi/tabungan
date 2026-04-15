@@ -144,6 +144,24 @@
             display: none; align-items: center; justify-content: center;
             z-index: 100; font-weight: 600;
         }
+        .rekening-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 0 auto 20px;
+            border: 1px solid #eee;
+        }
+
+        .rekening-text {
+            font-size: 0.85em;
+            color: #555;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -152,7 +170,12 @@
 
 <div class="container">
     <h1>💕 Tabungan Berdua</h1>
-    <p>No Rek: 770074748888 (Krom)</p>
+        <div class="rekening-container">
+        <span class="rekening-text" id="no-rek">770074748888 (Krom)</span>
+        <button class="btn-copy" onclick="copyRekening()" title="Salin Nomor Rekening">
+            <i class="fa-regular fa-copy"></i>
+        </button>
+        </div>
 
     <div class="balance-card">
         <p>Total Saldo Saat Ini</p>
@@ -207,7 +230,16 @@
     "https://script.google.com/macros/s/AKfycbzTYVLwoHvHeefAze2bxMzMbYkgJiQ2uj-18elNpg_YhbS_ep882REAMLf_Cz4JM7pt/exec";
     
     let ALL_DATA = [];
-
+function copyRekening() {
+        const rekText = "770074748888";
+        navigator.clipboard.writeText(rekText).then(() => {
+            const btn = document.querySelector('.btn-copy i');
+            btn.className = "fa-solid fa-check"; // Ubah ikon jadi centang
+            setTimeout(() => {
+                btn.className = "fa-regular fa-copy"; // Balikin ikon semula
+            }, 2000);
+        });
+}
     async function processData(tipe) {
         const user = document.getElementById('user').value;
         const amount = document.getElementById('amount').value;
