@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan Intan & Refki</title>
+    <title>Tabungan Refki & Intan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
@@ -31,167 +31,155 @@
             padding: 25px;
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .btn-settings {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #d63384;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
         }
 
         h1 { text-align: center; color: #d63384; margin: 0; font-size: 1.5rem; }
-        .subtitle { text-align: center; font-size: 0.8em; margin-bottom: 20px; color: #777; }
+        .subtitle { text-align: center; font-size: 0.8em; margin-bottom: 15px; color: #777; font-weight: 600; }
 
-        .balance-card {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 15px rgba(37, 117, 252, 0.3);
-        }
-
-        .balance-card p { margin: 0; opacity: 0.9; font-size: 0.9em; }
-        .balance-card h2 { margin: 5px 0 0; font-size: 2.2em; letter-spacing: 1px; font-weight: 600; }
-
-        /* Statistik Box */
-        .stats-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .stats-box {
-            flex: 1;
-            padding: 12px;
-            border-radius: 15px;
-            font-size: 0.75em;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .stats-add { background: #e8f5e9; border-color: #c8e6c9; }
-        .stats-draw { background: #ffebee; border-color: #ffcdd2; }
-
-        .stats-box strong { display: block; margin-bottom: 8px; text-align: center; font-size: 1.1em; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
-        .stat-row span:last-child { font-weight: 600; }
-
-        /* Form Styling */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-family: inherit;
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            background: #fff;
-        }
-
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        button {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            font-size: 1em;
-            color: white;
-        }
-
-        .btn-add { background: #2ecc71; }
-        .btn-withdraw { background: #e74c3c; }
-        button:active { transform: scale(0.95); }
-
-        /* History Styling */
-        .history-section { 
-            margin-top: 30px; 
-            padding-top: 20px;
-            border-top: 2px dashed #eee;
-        }
-
-        .history-item {
+        /* Target Progress */
+        .target-section {
             background: #fff;
             padding: 15px;
             border-radius: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            animation: fadeIn 0.5s ease;
-            border-left: 6px solid #ddd;
-        }
-
-        .type-masuk { border-left-color: #2ecc71; }
-        .type-keluar { border-left-color: #e74c3c; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .item-info strong { display: block; font-size: 0.95em; color: #333; }
-        .item-info span { font-size: 0.75em; color: #888; }
-        .item-amount { font-weight: 600; font-size: 1em; }
-        
-        .loader { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
-            display: none; align-items: center; justify-content: center;
-            z-index: 100; font-weight: 600;
-        }
-        .rekening-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 50px;
-            width: fit-content;
-            margin: 0 auto 20px;
+            margin-bottom: 20px;
             border: 1px solid #eee;
         }
 
-        .rekening-text {
-            font-size: 0.85em;
-            color: #555;
-            font-weight: 600;
+        .target-header { display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 8px; font-weight: 600; }
+        .progress-container {
+            height: 14px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        .btn-copy {
-            background: none;
-            border: none;
-            color: #d63384;
-            cursor: pointer;
-            padding: 5px;
-            font-size: 1em;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff7eb9, #ff1a8c);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+        .target-footer { display: flex; justify-content: space-between; align-items: center; }
+
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 15px rgba(37, 117, 252, 0.2);
+        }
+        .balance-card p { margin: 0; opacity: 0.8; font-size: 0.8em; }
+        .balance-card h2 { margin: 5px 0 0; font-size: 1.8em; letter-spacing: 1px; }
+
+        /* Stats Per Person */
+        .stats-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stats-box { flex: 1; padding: 12px; border-radius: 15px; font-size: 0.75em; border: 1px solid rgba(0,0,0,0.05); }
+        .stats-add { background: #e8f5e9; border-color: #c8e6c9; }
+        .stats-draw { background: #ffebee; border-color: #ffcdd2; }
+        .stats-box strong { display: block; margin-bottom: 8px; text-align: center; font-size: 1.1em; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+
+        /* Recap Box */
+        .recap-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .recap-box {
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.72em;
+            color: white;
+        }
+        .bg-in { background: #2ecc71; }
+        .bg-out { background: #e74c3c; }
+
+        /* Panel Setelan */
+        #settings-panel {
+            display: none; background: #fff; border: 2px solid var(--primary);
+            border-radius: 15px; padding: 15px; margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
         }
 
-        .btn-copy:hover { color: #ff7eb9; transform: scale(1.1); }
-        .btn-copy:active { transform: scale(0.9); }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.8em; }
+        input, select, textarea { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-family: inherit; }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; color: white; font-family: inherit; }
+        .btn-add { background: #2ecc71; }
+        .btn-withdraw { background: #e74c3c; }
+        .btn-save { background: var(--primary); width: 100%; margin-top: 10px; }
+
+        .history-item {
+            background: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 5px solid #ddd;
+        }
+        .type-masuk { border-left-color: #2ecc71; }
+        .type-keluar { border-left-color: #e74c3c; }
+
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div class="loader" id="loader">Sinkronisasi Data... ⏳</div>
+<div class="loader" id="loader">Sinkronisasi... ⏳</div>
 
 <div class="container">
-    <h1>💕 Tabungan Berdua</h1>
-        <div class="rekening-container">
-        <span class="rekening-text" id="no-rek">770074748888 (Krom)</span>
-        <button class="btn-copy" onclick="copyRekening()" title="Salin Nomor Rekening">
-            <i class="fa-regular fa-copy"></i>
-        </button>
+    <div class="btn-settings" onclick="toggleSettings()"><i class="fa-solid fa-gear"></i></div>
+    
+    <h1>💕 Tabungan Kita</h1>
+    <p class="subtitle">Refki & Intan</p>
+
+    <div class="target-section">
+        <div class="target-header">
+            <span id="txt-target-name">Target: -</span>
+            <span id="txt-target-nominal">Rp 0</span>
         </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="bar-progress"></div>
+        </div>
+        <div class="target-footer">
+            <span id="txt-percent" style="font-size: 0.85em; font-weight: bold; color: #d63384;">0%</span>
+            <span id="txt-days-left" style="font-size: 0.75em; color: #666;">Sisa Hari...</span>
+        </div>
+    </div>
+
+    <div id="settings-panel">
+        <h4 style="margin:0 0 15px 0; color:var(--primary); font-size: 0.9em; text-align: center;">⚙️ Pengaturan Target</h4>
+        <div class="form-group">
+            <label>Tujuan Menabung</label>
+            <input type="text" id="set-target-name" placeholder="Misal: Jalan-jalan 2027">
+        </div>
+        <div class="form-group">
+            <label>Nominal Target (Angka)</label>
+            <input type="number" id="set-target-amt" placeholder="Contoh: 50000000">
+        </div>
+        <div class="form-group">
+            <label>Tanggal Target (Deadline)</label>
+            <input type="date" id="set-target-date">
+        </div>
+        <button class="btn-save" onclick="saveSettings()">Simpan & Muat Ulang</button>
+    </div>
 
     <div class="balance-card">
         <p>Total Saldo Saat Ini</p>
@@ -201,15 +189,28 @@
     <div class="stats-container">
         <div class="stats-box stats-add">
             <strong style="color: #2e7d32;">Total Menabung</strong>
-            <div class="stat-row"><span>Refki:</span> <span id="add-refki">Rp 0</span></div>
-            <div class="stat-row"><span>Intan:</span> <span id="add-intan">Rp 0</span></div>
+            <div class="stat-row"><span>Refki:</span><span id="add-refki">Rp 0</span></div>
+            <div class="stat-row"><span>Intan:</span><span id="add-intan">Rp 0</span></div>
         </div>
         <div class="stats-box stats-draw">
             <strong style="color: #c62828;">Total Ditarik</strong>
-            <div class="stat-row"><span>Refki:</span> <span id="draw-refki">Rp 0</span></div>
-            <div class="stat-row"><span>Intan:</span> <span id="draw-intan">Rp 0</span></div>
+            <div class="stat-row"><span>Refki:</span><span id="draw-refki">Rp 0</span></div>
+            <div class="stat-row"><span>Intan:</span><span id="draw-intan">Rp 0</span></div>
         </div>
     </div>
+
+    <div class="recap-container">
+        <div class="recap-box bg-in">
+            <span>Gabungan Menabung</span><br>
+            <strong id="total-all-in">Rp 0</strong>
+        </div>
+        <div class="recap-box bg-out">
+            <span>Gabungan Ditarik</span><br>
+            <strong id="total-all-out">Rp 0</strong>
+        </div>
+    </div>
+
+    <hr style="border: 0.5px solid #eee; margin-bottom: 20px;">
 
     <div class="form-group">
         <label>Nama Penginput</label>
@@ -235,75 +236,82 @@
     </div>
 
     <div class="history-section">
-        <h3 style="margin-bottom: 15px; font-size: 1.1em; color: #d63384;">Riwayat Transaksi</h3>
+        <h3 style="margin: 25px 0 10px; font-size: 1em; color: #d63384;">Riwayat Transaksi</h3>
         <div id="history-list"></div>
     </div>
 </div>
 
 <script>
-    // GANTI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
-    const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzTYVLwoHvHeefAze2bxMzMbYkgJiQ2uj-18elNpg_YhbS_ep882REAMLf_Cz4JM7pt/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTYVLwoHvHeefAze2bxMzMbYkgJiQ2uj-18elNpg_YhbS_ep882REAMLf_Cz4JM7pt/exec";
     
+    // Inisialisasi CONFIG dengan tambahan targetDate
+    let CONFIG = JSON.parse(localStorage.getItem('tabungan_refki_intan_v3')) || {
+        targetName: "Belum Diatur",
+        targetNominal: 0,
+        targetDate: "2027-03-05"
+    };
+
     let ALL_DATA = [];
-function copyRekening() {
-        const rekText = "770074748888";
-        navigator.clipboard.writeText(rekText).then(() => {
-            const btn = document.querySelector('.btn-copy i');
-            btn.className = "fa-solid fa-check"; // Ubah ikon jadi centang
-            setTimeout(() => {
-                btn.className = "fa-regular fa-copy"; // Balikin ikon semula
-            }, 2000);
-        });
-}
+
+    function toggleSettings() {
+        const panel = document.getElementById('settings-panel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('set-target-name').value = CONFIG.targetName;
+        document.getElementById('set-target-amt').value = CONFIG.targetNominal;
+        document.getElementById('set-target-date').value = CONFIG.targetDate;
+    }
+
+    function saveSettings() {
+        CONFIG.targetName = document.getElementById('set-target-name').value || "Target";
+        CONFIG.targetNominal = parseInt(document.getElementById('set-target-amt').value) || 0;
+        CONFIG.targetDate = document.getElementById('set-target-date').value || "2027-03-05";
+        
+        localStorage.setItem('tabungan_refki_intan_v3', JSON.stringify(CONFIG));
+        location.reload();
+    }
+
+    function calculateDays() {
+        const target = new Date(CONFIG.targetDate);
+        const today = new Date();
+        // Set ke jam 0 agar perhitungan hari akurat
+        target.setHours(0,0,0,0);
+        today.setHours(0,0,0,0);
+        
+        const diffTime = target - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        const display = document.getElementById('txt-days-left');
+        if (diffDays > 0) {
+            display.innerText = `Sisa ${diffDays} Hari lagi`;
+        } else if (diffDays === 0) {
+            display.innerText = "Hari ini Target Tercapai!";
+            display.style.color = "#2ecc71";
+        } else {
+            display.innerText = "Waktu Habis!";
+            display.style.color = "#e74c3c";
+        }
+    }
+
     async function processData(tipe) {
         const user = document.getElementById('user').value;
         const amount = document.getElementById('amount').value;
         const note = document.getElementById('note').value;
-        const loader = document.getElementById('loader');
+        if (!amount || !note) return alert("Isi nominal dan keterangan!");
 
-        if (!amount || !note) {
-            alert("Harap isi nominal dan alasannya ya!");
-            return;
-        }
-
-        loader.style.display = "flex";
-
+        document.getElementById('loader').style.display = "flex";
         const now = new Date();
-        const tglWIB = now.toLocaleString("id-ID", { 
-            timeZone: "Asia/Jakarta", 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric'
-        });
-        const jamWIB = now.toLocaleString("id-ID", { 
-            timeZone: "Asia/Jakarta", 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
+        const tgl = now.toLocaleString("id-ID", { day: 'numeric', month: 'long', year: 'numeric'});
+        const jam = now.toLocaleString("id-ID", { hour: '2-digit', minute: '2-digit' });
 
-        const payload = {
-            tanggal: `${tglWIB}, ${jamWIB} WIB`,
-            nama: user,
-            tipe: tipe,
-            jumlah: parseInt(amount),
-            alasan: note
-        };
+        const payload = { tanggal: `${tgl}, ${jam} WIB`, nama: user, tipe: tipe, jumlah: parseInt(amount), alasan: note };
 
         try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            });
-            
+            await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
             document.getElementById('amount').value = '';
             document.getElementById('note').value = '';
             await loadData();
-        } catch (error) {
-            alert("Gagal terhubung ke database!");
-        } finally {
-            loader.style.display = "none";
-        }
+        } catch (e) { alert("Gagal koneksi!"); }
+        finally { document.getElementById('loader').style.display = "none"; }
     }
 
     async function loadData() {
@@ -311,74 +319,65 @@ function copyRekening() {
             const response = await fetch(SCRIPT_URL);
             ALL_DATA = await response.json();
             updateUI();
-        } catch (error) {
-            console.error("Gagal load data");
-            document.getElementById('history-list').innerHTML = '<p style="text-align:center; color:red;">Gagal memuat data.</p>';
-        }
+        } catch (e) { console.error("Error load"); }
     }
 
     function updateUI() {
-        let totalSaldo = 0;
-        let addRefki = 0, addIntan = 0;
-        let drawRefki = 0, drawIntan = 0;
-        let htmlHistory = '';
+        let saldo = 0, tin = 0, tout = 0;
+        let addRefki = 0, addIntan = 0, drawRefki = 0, drawIntan = 0;
+        let html = '';
 
         if (!ALL_DATA || ALL_DATA.length <= 1) {
-            document.getElementById('history-list').innerHTML = '<p style="text-align:center; color:#999; font-size:0.9em;">Belum ada riwayat.</p>';
+            document.getElementById('history-list').innerHTML = '<p style="text-align:center;color:#999;font-size:0.8em">Belum ada transaksi.</p>';
             return;
         }
 
-        // Hitung total saldo dari urutan normal (awal ke akhir)
         for (let i = 1; i < ALL_DATA.length; i++) {
-            const [tgl, nama, tipe, jumlah, alasan] = ALL_DATA[i];
-            const nominal = parseInt(jumlah) || 0;
-
+            const [tgl, nama, tipe, jml, ket] = ALL_DATA[i];
+            const nominal = parseInt(jml) || 0;
+            
             if (tipe === "Masuk") {
-                totalSaldo += nominal;
-                if (nama === "Refki") addRefki += nominal;
-                else if (nama === "Intan") addIntan += nominal;
+                tin += nominal;
+                if (nama === "Refki") addRefki += nominal; else addIntan += nominal;
             } else {
-                totalSaldo -= nominal;
-                if (nama === "Refki") drawRefki += nominal;
-                else if (nama === "Intan") drawIntan += nominal;
+                tout += nominal;
+                if (nama === "Refki") drawRefki += nominal; else drawIntan += nominal;
             }
         }
+        saldo = tin - tout;
 
-        // Generate Riwayat dari data terbaru (akhir ke awal)
-        for (let i = ALL_DATA.length - 1; i > 0; i--) {
-            const [tgl, nama, tipe, jumlah, alasan] = ALL_DATA[i];
-            const nominal = parseInt(jumlah) || 0;
-
-            htmlHistory += `
-                <div class="history-item ${tipe === 'Masuk' ? 'type-masuk' : 'type-keluar'}">
-                    <div class="item-info">
-                        <strong>${alasan}</strong>
-                        <span>${nama} • ${tgl}</span>
-                    </div>
-                    <div class="item-amount" style="color: ${tipe === 'Masuk' ? '#2ecc71' : '#e74c3c'}">
-                        ${tipe === 'Masuk' ? '+' : '-'} ${formatRupiah(nominal)}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Tampilkan ke layar
-        document.getElementById('total-saldo').innerText = formatRupiah(totalSaldo);
+        document.getElementById('total-saldo').innerText = formatRupiah(saldo);
         document.getElementById('add-refki').innerText = formatRupiah(addRefki);
         document.getElementById('add-intan').innerText = formatRupiah(addIntan);
         document.getElementById('draw-refki').innerText = formatRupiah(drawRefki);
         document.getElementById('draw-intan').innerText = formatRupiah(drawIntan);
-        document.getElementById('history-list').innerHTML = htmlHistory;
+        document.getElementById('total-all-in').innerText = formatRupiah(tin);
+        document.getElementById('total-all-out').innerText = formatRupiah(tout);
+
+        // Progress Calculation
+        const percent = CONFIG.targetNominal > 0 ? Math.min((saldo / CONFIG.targetNominal) * 100, 100).toFixed(1) : 0;
+        document.getElementById('bar-progress').style.width = percent + "%";
+        document.getElementById('txt-percent').innerText = percent + "%";
+        document.getElementById('txt-target-name').innerText = "Target: " + CONFIG.targetName;
+        document.getElementById('txt-target-nominal').innerText = formatRupiah(CONFIG.targetNominal);
+
+        // History UI
+        for (let i = ALL_DATA.length - 1; i > 0; i--) {
+            const [tgl, nama, tipe, jml, ket] = ALL_DATA[i];
+            html += `<div class="history-item ${tipe === 'Masuk' ? 'type-masuk' : 'type-keluar'}">
+                <div style="max-width: 65%"><strong>${ket}</strong><br><span style="font-size:0.75em; color:#888">${nama} • ${tgl}</span></div>
+                <div style="font-weight:600; color: ${tipe === 'Masuk' ? '#2ecc71' : '#e74c3c'}">
+                    ${tipe === 'Masuk' ? '+' : '-'} ${formatRupiah(parseInt(jml))}
+                </div>
+            </div>`;
+        }
+        document.getElementById('history-list').innerHTML = html;
     }
 
-    function formatRupiah(angka) {
-        return "Rp " + (angka || 0).toLocaleString('id-ID');
-    }
+    function formatRupiah(a) { return "Rp " + (a || 0).toLocaleString('id-ID'); }
 
-    // Jalankan load data saat halaman dibuka
+    calculateDays();
     loadData();
 </script>
-
 </body>
 </html>
-
