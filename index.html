@@ -10,106 +10,110 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     
     <style>
-        :root { --primary: #ff7eb9; --dark: #2d3436; --white: rgba(255, 255, 255, 0.95); }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #ff7eb9, #7afcff); min-height: 100vh; margin: 0; padding: 15px; color: var(--dark); }
-        .container { max-width: 500px; margin: auto; background: var(--white); padding: 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; display: none; }
-        .btn-settings { position: absolute; top: 20px; right: 20px; color: #d63384; font-size: 1.2rem; cursor: pointer; z-index: 10; }
-        h1 { text-align: center; color: #d63384; margin: 0; font-size: 1.5rem; }
-        .subtitle { text-align: center; font-size: 0.8em; margin-bottom: 15px; color: #777; font-weight: 600; }
+        :root { --primary: #ff7eb9; --secondary: #7afcff; --dark: #2d3436; --white: rgba(255, 255, 255, 0.85); }
         
-        /* Progress Section */
-        .target-section { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #ff7eb9; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #2d3436;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 15px; 
+            color: var(--dark); 
+            transition: background 0.5s ease;
+        }
+
+        .container { 
+            max-width: 500px; 
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 25px; 
+            border-radius: 25px; 
+            position: relative; 
+            display: none; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-settings { position: absolute; top: 20px; right: 20px; color: #d63384; font-size: 1.2rem; cursor: pointer; z-index: 10; text-shadow:
+        1px 1px 3px rgba(0,0,0,0.5); }
+        h1 { text-align: center; color: #d63384; margin: 0; font-size: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { text-align: center; font-size: 0.8em; margin-bottom: 15px; color: #eee; font-weight: 600; }
+        
+        .target-section { background: rgba(255, 255, 255, 0.3); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.3); }
         .target-header { display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 8px; font-weight: 600; }
-        .progress-container { height: 14px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+        .progress-container { height: 14px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #ff7eb9, #ff1a8c); width: 0%; transition: width 1s; }
         .needed-info { font-size: 0.75em; color: #e74c3c; font-weight: 600; text-align: center; margin-top: 5px; }
         
-        /* Charts */
         .charts-container { display: flex; gap: 10px; margin-bottom: 20px; }
-        .chart-box { flex: 1; background: #fff; padding: 10px; border-radius: 15px; border: 1px solid #ff7eb9; text-align: center; }
+        .chart-box { flex: 1; background: rgba(255, 255, 255, 0.3); padding: 10px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.3); text-align: center; }
         .chart-box h5 { margin: 0 0 10px; font-size: 0.7em; color: #d63384; }
         canvas { max-width: 100% !important; height: auto !important; }
 
-        .balance-card { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 15px; }
+        .balance-card { background: linear-gradient(135deg, rgba(106, 17, 203, 0.9) 0%, rgba(37, 117, 252, 0.9) 100%); color: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 15px; }
         
         .stats-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .stats-box { flex: 1; padding: 12px; border-radius: 15px; font-size:
-        0.75em; border: 1px solid #ff7eb9; }
-        .stats-add { background: #e8f5e9; } .stats-draw { background: #ffebee; }
+        .stats-box { flex: 1; padding: 12px; border-radius: 15px; font-size: 0.75em; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .stats-add { background: rgba(232, 245, 233, 0.8); } 
+        .stats-draw { background: rgba(255, 235, 238, 0.8); }
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
         
         .recap-container { display: flex; gap: 10px; margin-bottom: 20px; }
         .recap-box { flex: 1; padding: 10px; border-radius: 15px; text-align: center; font-size: 0.75em; color: white; font-weight: 600; }
-        .bg-in { background: #2ecc71; } .bg-out { background: #e74c3c; }
+        .bg-in { background: rgba(46, 204, 113, 0.9); } 
+        .bg-out { background: rgba(231, 76, 60, 0.9); }
 
-        /* MODAL POPUP STYLE */.modal-overlay { 
-    position: fixed; 
-    top: 0; 
-    left: 50%; /* Geser ke tengah */
-    width: 90%; 
-    height: 100%; 
-    
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 1000; 
-    transform: translateX(-50%); /* Tarik balik 50% dari lebar overlay agar presisi di tengah */
-}
-/* Container Utama Inputan */
+/* --- STYLE INPUT TRANSPARAN TOTAL + EFEK NYALA --- */
+
 .input {
   position: relative;
   font-size: 1rem;
-  background: linear-gradient(21deg, #ff7eb9, #7afcff);
-  padding: 3px; /* Ketebalan border gradien */
-  display: block; 
-  border-radius: 50px; /* Gunakan nilai PX yang pasti agar lebih stabil */
+  /* Garis pinggir tetap gradasi pelangi */
+  background: linear-gradient(21deg, var(--primary), var(--secondary));
+  padding: 2px; 
+  display: block;
+  border-radius: 50px;
   margin-bottom: 15px;
-  box-shadow: none !important;
   z-index: 1;
 }
 
-/* Isi Input (Input, Select, Textarea) */
+/* Bagian dalam input dibuat transparan */
 .input *:not(span) {
   position: relative;
   display: block;
   width: 100%;
-  /* PERBAIKAN: Berikan radius spesifik, sedikit lebih kecil dari induk (50px - 3px) */
-  border-radius: 47px !important; 
+  border-radius: 47px !important;
   margin: 0;
   border: none;
   outline: none;
   padding: 12px 20px;
   z-index: 2;
-  background: #fff;
-  box-sizing: border-box;
+  /* TRANSPARAN TOTAL: Menggunakan rgba 0 agar tembus pandang */
+  background: rgba(255, 255, 255, 0.1) !important; 
+  color: #fff !important;
+  backdrop-filter: blur(5px); /* Memberikan sedikit efek kaca buram */
+  -webkit-backdrop-filter: blur(5px);
   font-family: inherit;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
-/* KHUSUS TEXTAREA agar radiusnya tidak terlalu tajam di tengah */
-.input textarea {
-  border-radius: 25px !important; /* Radius lebih kecil agar teks di dalam tidak terpotong */
-  min-height: 80px;
-  resize: none;
-  padding: 15px 20px;
+/* Saat input diklik, background sedikit lebih terang agar teks jelas */
+.input *:not(span):focus {
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Penyesuaian khusus untuk Select agar tetap lonjong */
-.input select {
-  appearance: none; /* Menghilangkan panah default agar tidak merusak radius */
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff7eb9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 15px;
-}
-
-/* Efek Glow & Animasi */
+/* Munculkan glow pelangi saat fokus */
 .input *:not(span):focus + span {
   opacity: 1;
   transform: scale(1);
 }
 
+/* Wadah efek cahaya di belakang input */
 .input span {
   transform: scale(0.98, 0.92);
   transition: transform 0.4s, opacity 0.25s;
@@ -122,19 +126,28 @@
   bottom: 0;
   border-radius: 50px;
   pointer-events: none;
-  box-shadow: inset 0 0 0 3px #fff, 0 0 0 4px #fff, 3px -3px 30px #ff7eb9, -3px 3px 30px #7afcff;
+  /* Cahaya luar (Glow) */
+  box-shadow: 
+    3px -3px 25px var(--primary), 
+    -3px 3px 25px var(--secondary);
 }
 
-    .modal-content { background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+/* Warna placeholder agar tetap terlihat di bg transparan */
+.input *:not(span)::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* --- END STYLE KHUSUS --- */
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: rgba(255, 255, 255, 0.95); width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
         
-        .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.8em; }
-        input, select, textarea { width: 100%; padding: 10px; border: 2px solid #ff7eb9; border-radius: 10px; box-sizing: border-box; font-family: inherit; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; color: white; margin-top: 5px; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; color: white; margin-top: 5px; transition: 0.3s; }
         .btn-add { background: #2ecc71; } .btn-withdraw { background: #e74c3c; } .btn-save { background: var(--primary); }
         .btn-close { background: #95a5a6; margin-top: 10px; }
 
-        .history-item { background: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ddd; }
+        .history-item { background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ddd; backdrop-filter: blur(5px); }
         .type-masuk { border-left-color: #2ecc71; } .type-keluar { border-left-color: #e74c3c; }
 
         .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; }
@@ -144,45 +157,16 @@
 </head>
 <body>
 
-<div id="loader" class="loader">
-    <div class="spinner"></div>
-    <p id="loader-text" style="font-weight: 600; color: #d63384;">Sinkronisasi...</p>
-</div>
+<div id="loader" class="loader"><div class="spinner"></div><p id="loader-text" style="font-weight: 600; color: #d63384;">Sinkronisasi...</p></div>
 
 <div id="modalSettings" class="modal-overlay">
     <div class="modal-content">
         <h4 style="margin:0 0 15px 0; color:var(--primary); text-align: center;">⚙️ Pengaturan</h4>
-         <div class="form-group">
-            <label>Tujuan Menabung</label>
-            <span class="input">
-                <input type="text" id="set-target-name" placeholder="Contoh: Liburan ke Bali">
-                <span></span>
-            </span>
-        </div>
-
-        <div class="form-group">
-            <label>Nominal Target</label>
-            <span class="input">
-                <input type="number" id="set-target-amt" placeholder="Rp 0">
-                <span></span>
-            </span>
-        </div>
-
-        <div class="form-group">
-            <label>Tanggal Target</label>
-            <span class="input">
-                <input type="date" id="set-target-date">
-                <span></span>
-            </span>
-        </div>
-
-        <div class="form-group">
-            <label>PIN Keamanan</label>
-            <span class="input">
-                <input type="number" id="set-pin" placeholder="6 Digit PIN">
-                <span></span>
-            </span>
-        </div>
+        <div class="form-group"><label>Tujuan Menabung</label><span class="input"><input type="text" id="set-target-name"><span></span></span></div>
+        <div class="form-group"><label>Nominal Target</label><span class="input"><input type="number" id="set-target-amt"><span></span></span></div>
+        <div class="form-group"><label>Tanggal Target</label><span class="input"><input type="date" id="set-target-date"><span></span></span></div>
+        <div class="form-group"><label>PIN Keamanan</label><span class="input"><input type="number" id="set-pin"><span></span></span></div>
+        <div class="form-group"><label>URL Background (.jpg / .png)</label><span class="input"><input type="text" id="set-bg-url"><span></span></span></div>
         <button class="btn-save" onclick="saveSettings()">Simpan</button>
         <button class="btn-close" onclick="toggleSettings()">Tutup</button>
     </div>
@@ -192,75 +176,44 @@
     <div class="btn-settings" onclick="toggleSettings()"><i class="fa-solid fa-gear"></i></div>
     <h1>💕 Tabungan Kita</h1>
     <p class="subtitle">Refki & Intan</p>
-    <div class="balance-card"><p style="margin:0; opacity:0.8;
-    font-size:0.8em">Sisa Tabungan</p><h2 id="total-saldo">Rp 0</h2></div>
+    <div class="balance-card"><p style="margin:0; opacity:0.8; font-size:0.8em">Sisa Tabungan</p><h2 id="total-saldo">Rp 0</h2></div>
     
     <div class="target-section">
         <div class="target-header"><span id="txt-target-name">Tujuan</span><span id="txt-target-nominal">Target: Rp 0</span></div>
         <div class="progress-container"><div class="progress-bar" id="bar-progress"></div></div>
-        <div class="target-footer">
+        <div style="display:flex; justify-content:space-between">
             <span id="txt-percent" style="font-size: 0.85em; font-weight: bold; color: #d63384;">0%</span>
-            <span id="txt-days-left" style="font-size: 0.75em; color: #666;">-</span>
+            <span id="txt-days-left" style="font-size: 0.75em; color: #444;">-</span>
         </div>
         <div id="txt-needed-amt" class="needed-info"></div>
     </div>
 
-
-
-
     <div class="stats-container">
-        <div class="stats-box stats-add"><strong>Ditabung</strong><div class="stat-row"><span>Refki:</span><span id="add-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="add-intan">0</span></div></div>
-        <div class="stats-box stats-draw"><strong>Ditarik</strong><div class="stat-row"><span>Refki:</span><span id="draw-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="draw-intan">0</span></div></div>
+        <div class="stats-box stats-add"><strong>Masuk</strong><div class="stat-row"><span>Refki:</span><span id="add-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="add-intan">0</span></div></div>
+        <div class="stats-box stats-draw"><strong>Keluar</strong><div class="stat-row"><span>Refki:</span><span id="draw-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="draw-intan">0</span></div></div>
     </div>
 
     <div class="recap-container">
-        <div class="recap-box bg-in">Gabungan DiTabung<br><span id="total-all-in">Rp 0</span></div>
-        <div class="recap-box bg-out">Gabungan DiTarik<br><span id="total-all-out">Rp 0</span></div>
+        <div class="recap-box bg-in">Total Masuk<br><span id="total-all-in">Rp 0</span></div>
+        <div class="recap-box bg-out">Total Keluar<br><span id="total-all-out">Rp 0</span></div>
     </div>
+
     <div class="charts-container">
-        <div class="chart-box">
-            <h5>Kontribusi Nabung</h5>
-            <canvas id="chartSaving"></canvas>
-        </div>
-        <div class="chart-box">
-            <h5>Kontribusi Tarik</h5>
-            <canvas id="chartExpense"></canvas>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Penginput</label>
-        <span class="input">
-            <select id="user">
-                <option value="Refki">Refki</option>
-                <option value="Intan">Intan</option>
-            </select>
-            <span></span>
-        </span>
+        <div class="chart-box"><h5>Kontribusi Nabung</h5><canvas id="chartSaving"></canvas></div>
+        <div class="chart-box"><h5>Kontribusi Tarik</h5><canvas id="chartExpense"></canvas></div>
     </div>
 
-    <div class="form-group">
-        <label>Nominal (Rp)</label>
-        <span class="input">
-            <input type="number" id="amount" placeholder="Masukkan nominal...">
-            <span></span>
-        </span>
-    </div>
-    <div class="form-group">
-        <label>Alasan</label>
-        <span class="input">
-            <input type="number" id="note" placeholder="contoh: Gajian/Jajan cilok">
-            <span></span>
-        </span>
-    </div>
+    <div class="form-group"><label style="color: white;">Penginput</label><span class="input"><select id="user"><option value="Refki">Refki</option><option value="Intan">Intan</option></select><span></span></span></div>
+    <div class="form-group"><label style="color: white;">Nominal (Rp)</label><span class="input"><input type="number" id="amount" placeholder="Nominal..."><span></span></span></div>
+    <div class="form-group"><label style="color: white;">Alasan</label><span class="input"><input type="text" id="note" placeholder="Alasan..."><span></span></span></div>
 
-    
     <div style="display:flex; gap:10px"><button class="btn-add" onclick="processData('Masuk')">Tambah</button><button class="btn-withdraw" onclick="processData('Keluar')">Tarik</button></div>
-    <h4>Riwayat:</h4>
-    <div id="history-list" style="margin-top:20px"></div>
+    <h4 style="margin-top:20px; color:#fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Riwayat:</h4>
+    <div id="history-list"></div>
 </div>
-
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxFfEoiKHVo_6AJ_W5vj-oAgd9-GMkRE1HrHDDKIXTMJ-UT-9fFAoOXf59GJIRGt4A/exec";
+    // Ganti URL ini jika kamu mengganti Deployment di Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWilVim3-QznyPS9Klv6vP_e_kPEq_ra-TJPPKtFC48SO3fFdorVZX3DgtJjeFyr7U/exec";
     const ERROR_IMG = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI2Lr63EJ-e-HQWeYpJ3kT953aWenQLYpXdQ&s";
     
     let GLOBAL_SETTINGS = {};
@@ -275,41 +228,77 @@
             const response = await fetch(SCRIPT_URL);
             const res = await response.json();
             GLOBAL_SETTINGS = res.settings;
-            if (pinInput !== String(GLOBAL_SETTINGS.pin)) { alert("PIN SALAH!"); window.location.href = ERROR_IMG; return; }
+            
+            // Validasi PIN
+            if (pinInput !== String(GLOBAL_SETTINGS.pin)) { 
+                alert("PIN SALAH!"); 
+                window.location.href = ERROR_IMG; 
+                return; 
+            }
+            
+            // Pasang Background dari Kolom J1
+            if (GLOBAL_SETTINGS.background) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${GLOBAL_SETTINGS.background}')`;
+            }
+
             document.getElementById('loader').style.display = "none";
             document.getElementById('main-content').style.display = "block";
             updateUI(res.transactions);
-        } catch (e) { alert("Error database!"); }
+        } catch (e) { 
+            alert("Error database atau koneksi internet terputus!"); 
+        }
     }
 
     function createCharts(addR, addI, drawR, drawI) {
-        const commonOptions = {
-            borderWidth: 0,
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    color: '#fff',
-                    font: { weight: 'bold', size: 10 },
-                    formatter: (value, ctx) => ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%',
-                    textAlign: 'center'
-                }
-            }
+        // Opsi agar Chart tidak interaktif (Hapus Tooltip & Event)
+        const commonOptions = { 
+            borderWidth: 0, 
+            events: [], 
+            plugins: { 
+                legend: { display: false }, 
+                tooltip: { enabled: false },
+                datalabels: { 
+                    color: '#fff', 
+                    font: { weight: 'bold', size: 10 }, 
+                    formatter: (value, ctx) => ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%', 
+                    textAlign: 'center' 
+                } 
+            } 
         };
-        const totalAdd = addR + addI || 1;
-        const totalDraw = drawR + drawI || 1;
 
+        const hasAdd = (addR + addI) > 0;
+        const hasDraw = (drawR + drawI) > 0;
+
+        // Jika data 0, tampilkan 50:50 agar lingkaran tetap muncul
+        const dataAdd = hasAdd ? [((addR/(addR+addI))*100).toFixed(1), ((addI/(addR+addI))*100).toFixed(1)] : [50, 50];
+        const dataDraw = hasDraw ? [((drawR/(drawR+drawI))*100).toFixed(1), ((drawI/(drawR+drawI))*100).toFixed(1)] : [50, 50];
+
+        // Chart Nabung
         if(savingChart) savingChart.destroy();
-        savingChart = new Chart(document.getElementById('chartSaving'), {
-            type: 'pie',
-            data: { labels: ['Refki', 'Intan'], datasets: [{ data: [(addR/totalAdd*100).toFixed(1), (addI/totalAdd*100).toFixed(1)], backgroundColor: ['#6a11cb', '#ff7eb9'] }] },
-            options: commonOptions
+        savingChart = new Chart(document.getElementById('chartSaving'), { 
+            type: 'pie', 
+            data: { 
+                labels: ['Refki', 'Intan'], 
+                datasets: [{ 
+                    data: dataAdd, 
+                    backgroundColor: hasAdd ? ['#6a11cb', '#ff7eb9'] : ['#444', '#555'] 
+                }] 
+            }, 
+            options: commonOptions 
         });
 
+        // Chart Tarik
         if(expenseChart) expenseChart.destroy();
-        expenseChart = new Chart(document.getElementById('chartExpense'), {
-            type: 'pie',
-            data: { labels: ['Refki', 'Intan'], datasets: [{ data: [(drawR/totalDraw*100).toFixed(1), (drawI/totalDraw*100).toFixed(1)], backgroundColor: ['#e74c3c', '#f39c12'] }] },
-            options: commonOptions
+        expenseChart = new Chart(document.getElementById('chartExpense'), { 
+            type: 'pie', 
+            data: { 
+                labels: ['Refki', 'Intan'], 
+                datasets: [{ 
+                    data: dataDraw, 
+                    backgroundColor: hasDraw ? ['#e74c3c', '#f39c12'] : ['#444', '#555'] 
+                }] 
+            }, 
+            options: commonOptions 
         });
     }
 
@@ -317,8 +306,13 @@
         let saldo=0, tin=0, tout=0, addR=0, addI=0, drawR=0, drawI=0, html='';
         data.forEach(row => {
             const val = parseInt(row[3]) || 0;
-            if (row[2] === "Masuk") { tin += val; if(row[1]==="Refki") addR+=val; else addI+=val; }
-            else { tout += val; if(row[1]==="Refki") drawR+=val; else drawI+=val; }
+            if (row[2] === "Masuk") { 
+                tin += val; 
+                row[1] === "Refki" ? addR += val : addI += val; 
+            } else { 
+                tout += val; 
+                row[1] === "Refki" ? drawR += val : drawI += val; 
+            }
         });
         saldo = tin - tout;
 
@@ -332,27 +326,28 @@
 
         createCharts(addR, addI, drawR, drawI);
 
-        // Ubah baris ini:
-document.getElementById('txt-target-name').innerHTML = `Tujuan: <span
-style="color: #ff7eb9;">${GLOBAL_SETTINGS.tujuan}</span>`;
-
+        document.getElementById('txt-target-name').innerHTML = `Tujuan: <span style="color: #ff7eb9;">${GLOBAL_SETTINGS.tujuan}</span>`;
         document.getElementById('txt-target-nominal').innerText = formatR(GLOBAL_SETTINGS.nominal);
+        
         const pct = Math.min((saldo / GLOBAL_SETTINGS.nominal) * 100, 100).toFixed(1);
         document.getElementById('bar-progress').style.width = pct + "%";
         document.getElementById('txt-percent').innerText = pct + "%";
-
+        
         const needed = GLOBAL_SETTINGS.nominal - saldo;
-        const neededEl = document.getElementById('txt-needed-amt');
-        neededEl.innerText = needed > 0 ? "Kurang " + formatR(needed) + " lagi" : "🏆 Target Tercapai!";
-        neededEl.style.color = needed > 0 ? "#e74c3c" : "#2ecc71";
+        const txtNeeded = document.getElementById('txt-needed-amt');
+        txtNeeded.innerText = needed > 0 ? "Kurang " + formatR(needed) + " lagi" : "🏆 Target Tercapai!";
+        txtNeeded.style.color = needed > 0 ? "#e74c3c" : "#2ecc71";
 
         const days = Math.ceil((new Date(GLOBAL_SETTINGS.tanggal) - new Date().setHours(0,0,0,0)) / 86400000);
         document.getElementById('txt-days-left').innerText = days >= 0 ? `Sisa ${days} Hari` : "Waktu Habis";
 
+        // Tampilan Riwayat (Tanggal utuh tidak disingkat)
         data.slice().reverse().forEach(row => {
             html += `<div class="history-item ${row[2] === 'Masuk' ? 'type-masuk' : 'type-keluar'}">
                 <div style="font-size:0.8em"><strong>${row[4]}</strong><br>${row[1]} • ${row[0]}</div>
-                <div style="font-weight:600; color:${row[2]==='Masuk'?'#2ecc71':'#e74c3c'}">${row[2]==='Masuk'?'+':'-'} ${formatR(row[3])}</div>
+                <div style="font-weight:600; color:${row[2] === 'Masuk' ? '#2ecc71' : '#e74c3c'}">
+                    ${row[2] === 'Masuk' ? '+' : '-'} ${formatR(row[3])}
+                </div>
             </div>`;
         });
         document.getElementById('history-list').innerHTML = html;
@@ -362,21 +357,36 @@ style="color: #ff7eb9;">${GLOBAL_SETTINGS.tujuan}</span>`;
         const amount = document.getElementById('amount').value;
         const note = document.getElementById('note').value;
         if (!amount || !note) return alert("Isi data!");
+        
         showLoader("Mencatat...");
-        const now = new Date();
-        const payload = {
-            tanggal: now.toLocaleString("id-ID", {day:'numeric', month:'long', year:'numeric'}) + ", " + now.toLocaleString("id-ID", {hour:'2-digit', minute:'2-digit'}) + " WIB",
-            nama: document.getElementById('user').value,
-            tipe: tipe,
-            jumlah: parseInt(amount),
-            alasan: note
+
+        // Format Tanggal rapi: "24 April 2026, 12.00 WIB"
+        const opsi = { day: 'numeric', month: 'long', year: 'numeric' };
+        const tgl = new Date().toLocaleDateString('id-ID', opsi);
+        const jam = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+        const formatTgl = `${tgl}, ${jam} WIB`;
+
+        const payload = { 
+            tanggal: formatTgl, 
+            nama: document.getElementById('user').value, 
+            tipe: tipe, 
+            jumlah: parseInt(amount), 
+            alasan: note 
         };
+
         await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         location.reload();
     }
 
     async function saveSettings() {
-        const payload = { action: "updateSettings", tujuan: document.getElementById('set-target-name').value, nominal: parseInt(document.getElementById('set-target-amt').value), tanggal: document.getElementById('set-target-date').value, pin: document.getElementById('set-pin').value };
+        const payload = { 
+            action: "updateSettings", 
+            tujuan: document.getElementById('set-target-name').value, 
+            nominal: parseInt(document.getElementById('set-target-amt').value), 
+            tanggal: document.getElementById('set-target-date').value, 
+            pin: document.getElementById('set-pin').value,
+            background: document.getElementById('set-bg-url').value 
+        };
         showLoader("Menyimpan...");
         await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         location.reload();
@@ -384,21 +394,24 @@ style="color: #ff7eb9;">${GLOBAL_SETTINGS.tujuan}</span>`;
 
     function toggleSettings() {
         const modal = document.getElementById('modalSettings');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         if(modal.style.display === 'flex') {
-            modal.style.display = 'none';
-        } else {
-            modal.style.display = 'flex';
             document.getElementById('set-target-name').value = GLOBAL_SETTINGS.tujuan;
             document.getElementById('set-target-amt').value = GLOBAL_SETTINGS.nominal;
             document.getElementById('set-target-date').value = GLOBAL_SETTINGS.tanggal;
             document.getElementById('set-pin').value = GLOBAL_SETTINGS.pin;
+            document.getElementById('set-bg-url').value = GLOBAL_SETTINGS.background || "";
         }
     }
 
     function formatR(v) { return "Rp " + (v || 0).toLocaleString('id-ID'); }
-    function showLoader(t) { document.getElementById('loader').style.display = "flex"; document.getElementById('loader-text').innerText = t; }
+    function showLoader(t) { 
+        document.getElementById('loader').style.display = "flex"; 
+        document.getElementById('loader-text').innerText = t; 
+    }
 
     init();
 </script>
+
 </body>
 </html>
