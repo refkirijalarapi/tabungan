@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabungan Refki & Intan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --primary: #ff7eb9; 
+            --secondary: #7afcff; 
+            --dark: #2d3436; 
+            --white: rgba(255, 255, 255, 0.85); 
+        }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #2d3436;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 15px; 
+            color: var(--dark); 
+            transition: background 0.5s ease;
+        }
+        .container { 
+            max-width: 500px; 
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 25px; 
+            border-radius: 25px; 
+            position: relative; 
+            display: none; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-settings {
+            position: absolute; top: 20px; right: 20px; color: #ff7eb9; font-size: 1.2rem; cursor: pointer; z-index: 10; text-shadow:
+            1px 1px 3px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            color: #ff7eb9;
+            margin: 0;
+            font-size: 1.5rem; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            text-align: center; 
+            font-size: 0.8em; 
+            margin-bottom: 15px; 
+            color: #eee; 
+            font-weight: 600;
+        }
+        .target-section { background: rgba(255, 255, 255, 0.3); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .target-header { display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 8px; font-weight: 600; }
+        .progress-container { height: 14px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #ff7eb9, #ff1a8c); width: 0%; transition: width 1s; }
+        .needed-info { font-size: 0.75em; color: #e74c3c; font-weight: 600; text-align: center; margin-top: 5px; }
+        .charts-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .chart-box { flex: 1; background: rgba(255, 255, 255, 0.3); padding: 10px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.3); text-align: center; }
+        .chart-box h5 { margin: 0 0 10px; font-size: 0.7em; color: #ff7eb9; }
+        canvas { max-width: 100% !important; height: auto !important; }
+        .balance-card { background: linear-gradient(135deg, rgba(106, 17, 203, 0.9) 0%, rgba(37, 117, 252, 0.9) 100%); color: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 15px; }
+        .stats-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stats-box { flex: 1; padding: 12px; border-radius: 15px; font-size: 0.75em; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .stats-add { background: rgba(232, 245, 233, 0.8); } 
+        .stats-draw { background: rgba(255, 235, 238, 0.8); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .recap-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .recap-box { flex: 1; padding: 10px; border-radius: 15px; text-align: center; font-size: 0.75em; color: white; font-weight: 600; }
+        .bg-in { background: rgba(46, 204, 113, 0.9); } 
+        .bg-out { background: rgba(231, 76, 60, 0.9); }
+        .input {
+          position: relative;
+          font-size: 1rem;
+          background: linear-gradient(21deg, var(--primary), var(--secondary));
+          padding: 2px; 
+          display: block;
+          border-radius: 50px;
+          margin-bottom: 15px;
+          z-index: 1;
+        }
+        .input *:not(span) {
+          position: relative;
+          display: block;
+          width: 100%;
+          border-radius: 47px !important;
+          margin: 0;
+          border: none;
+          outline: none;
+          padding: 12px 20px;
+          z-index: 2;
+          background: rgba(255, 255, 255, 0.1) !important; 
+          color: #fff !important;
+          backdrop-filter: blur(5px); 
+          -webkit-backdrop-filter: blur(5px);
+          font-family: inherit;
+          box-sizing: border-box;
+          transition: all 0.3s ease;
+        }
+        .input *:not(span):focus {
+          background: rgba(255, 255, 255, 0.2) !important;
+        }
+        .input *:not(span):focus + span {
+          opacity: 1;
+          transform: scale(1);
+        }
+        .input span {
+          transform: scale(0.98, 0.92);
+          transition: transform 0.4s, opacity 0.25s;
+          opacity: 0;
+          position: absolute;
+          z-index: 0;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          border-radius: 50px;
+          pointer-events: none;
+          box-shadow: 3px -3px 25px var(--primary), -3px 3px 25px var(--secondary);
+        }
+        .input *:not(span)::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: rgba(255, 255, 255, 0.95); width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; color: white; margin-top: 5px; transition: 0.3s; }
+        .btn-add { background: #2ecc71; } .btn-withdraw { background: #e74c3c; } .btn-save { background: var(--primary); }
+        .btn-close { background: #95a5a6; margin-top: 10px; }
+        .history-item { background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ddd; backdrop-filter: blur(5px); }
+        .type-masuk { border-left-color: #2ecc71; } .type-keluar { border-left-color: #e74c3c; }
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .copy-success {
+            animation: bounceIn 0.5s ease;
+            text-shadow: 0 0 10px var(--secondary);
+        }
+        .fa-copy {
+            transition: all 0.2s ease;
+        }
+        .fa-copy:active {
+            transform: scale(0.8);
+        }
+    </style>
+</head>
+<body>
+<div id="loader" class="loader"><div class="spinner"></div><p id="loader-text" style="font-weight: 600; color: #ff7eb9;">Menghubungkan Ke Database...</p></div>
+<div id="modalSettings" class="modal-overlay">
+    <div class="modal-content">
+        <h4 style="margin:0 0 15px 0; color:var(--primary); text-align: center;">⚙️ Pengaturan</h4>
+        <div class="form-group"><label>Tujuan Menabung</label><span class="input"><input type="text" id="set-target-name"><span></span></span></div>
+        <div class="form-group"><label>Nominal Target</label><span class="input"><input type="number" id="set-target-amt"><span></span></span></div>
+        <div class="form-group"><label>Tanggal Target</label><span class="input"><input type="date" id="set-target-date"><span></span></span></div>
+        <div class="form-group"><label>PIN Keamanan</label><span class="input"><input type="number" id="set-pin"><span></span></span></div>
+        <div class="form-group">
+    <label>Background</label>
+    <span class="input">
+        <input type="file" id="set-bg-file" accept="image/*">
+        <span></span>
+    </span>
+    <input type="hidden" id="set-bg-url"> <small id="upload-status" style="color: #eee; font-size: 0.7em; display: block; margin-top: 5px;"></small>
+</div>
+
+        <button class="btn-save" onclick="saveSettings()">Simpan</button>
+        <button class="btn-close" onclick="toggleSettings()">Tutup</button>
+    </div>
+</div>
+<div id="main-content" class="container">
+    <div class="btn-settings" onclick="toggleSettings()"><i class="fa-solid fa-gear"></i></div>
+    <h1>💕 Tabungan Kita</h1>
+    <p class="subtitle">Refki & Intan</p>
+    <div class="balance-card">
+        <p style="margin:0; opacity:0.8; font-size:0.8em">Tabungan</p>
+        <h2 id="total-saldo">Rp 0</h2>
+        <p style="margin:0; opacity:0.9; font-size:0.85em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            No Rek. <span id="norek">7700 7474 8888</span>
+            <i class="fa-regular fa-copy" onclick="copyNorek()" style="cursor:
+            pointer; color: var(--primary); font-size: 1.1em;" title="Salin Nomor
+            Rekening"></i>
+        </p>
+    </div>
+    <div class="target-section">
+        <div class="target-header"><span id="txt-target-name">Tujuan</span><span id="txt-target-nominal">Target: Rp 0</span></div>
+        <div class="progress-container"><div class="progress-bar" id="bar-progress"></div></div>
+        <div style="display:flex; justify-content:space-between">
+            <span id="txt-percent" style="font-size: 0.85em; font-weight: bold; color: #ff7eb9;">0%</span>
+            <span id="txt-days-left" style="font-size: 0.75em; color: #444;">-</span>
+        </div>
+        <div id="txt-needed-amt" class="needed-info"></div>
+    </div>
+    <div class="stats-container">
+        <div class="stats-box stats-add"><strong>Masuk</strong><div class="stat-row"><span>Refki:</span><span id="add-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="add-intan">0</span></div></div>
+        <div class="stats-box stats-draw"><strong>Keluar</strong><div class="stat-row"><span>Refki:</span><span id="draw-refki">0</span></div><div class="stat-row"><span>Intan:</span><span id="draw-intan">0</span></div></div>
+    </div>
+    <div class="recap-container">
+        <div class="recap-box bg-in">Total Masuk<br><span id="total-all-in">Rp 0</span></div>
+        <div class="recap-box bg-out">Total Keluar<br><span id="total-all-out">Rp 0</span></div>
+    </div>
+    <div class="charts-container">
+        <div class="chart-box"><h5>Kontribusi Nabung</h5><canvas id="chartSaving"></canvas></div>
+        <div class="chart-box"><h5>Kontribusi Tarik</h5><canvas id="chartExpense"></canvas></div>
+    </div>
+    <div class="form-group"><label style="color: white;">Penginput</label><span class="input"><select id="user"><option value="Refki">Refki</option><option value="Intan">Intan</option></select><span></span></span></div>
+    <div class="form-group"><label style="color: white;">Nominal (Rp)</label><span class="input"><input type="number" id="amount" placeholder="Nominal..."><span></span></span></div>
+    <div class="form-group"><label style="color: white;">Alasan</label><span class="input"><input type="text" id="note" placeholder="Alasan..."><span></span></span></div>
+    <div style="display:flex; gap:10px"><button class="btn-add" onclick="processData('Masuk')">Tambah</button><button class="btn-withdraw" onclick="processData('Keluar')">Tarik</button></div>
+    <h4 style="margin-top:20px; color:#fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Riwayat:</h4>
+    <div id="history-list"></div>
+</div>
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsayl2hkAJOq2vsRxzO14hxTJ74UWqdxA-5TZumrX8E7P8IV9zfIM4jTVFbhF3Gro/exec";
+    const ERROR_IMG = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI2Lr63EJ-e-HQWeYpJ3kT953aWenQLYpXdQ&s";
+    let GLOBAL_SETTINGS = {};
+    let savingChart, expenseChart;
+    Chart.register(ChartDataLabels);
+    async function init() {
+        const pinInput = prompt("Masukkan PIN 6 Digit:");
+        if (!pinInput) window.location.href = ERROR_IMG;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const res = await response.json();
+            GLOBAL_SETTINGS = res.settings;
+            if (pinInput !== String(GLOBAL_SETTINGS.pin)) { 
+                alert("PIN SALAH!"); 
+                window.location.href = ERROR_IMG; 
+                return; 
+            }
+            if (GLOBAL_SETTINGS.background) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${GLOBAL_SETTINGS.background}')`;
+            }
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('main-content').style.display = "block";
+            updateUI(res.transactions);
+        } catch (e) { 
+            alert("Error database atau koneksi internet terputus!"); 
+        }
+    }
+      function createCharts(addR, addI, drawR, drawI) {
+        const commonOptions = { 
+            borderWidth: 0, 
+            events: [], 
+            plugins: { 
+                legend: { display: false }, 
+                tooltip: { enabled: false },
+                datalabels: { 
+                    color: '#fff', 
+                    font: { weight: 'bold', size: 10 }, 
+                    formatter: (value, ctx) => ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%', 
+                    textAlign: 'center' 
+                } 
+            } 
+        };
+        const hasAdd = (addR + addI) > 0;
+        const hasDraw = (drawR + drawI) > 0;
+        const dataAdd = hasAdd ? [((addR/(addR+addI))*100).toFixed(1), ((addI/(addR+addI))*100).toFixed(1)] : [50, 50];
+        const dataDraw = hasDraw ? [((drawR/(drawR+drawI))*100).toFixed(1), ((drawI/(drawR+drawI))*100).toFixed(1)] : [50, 50];
+        if(savingChart) savingChart.destroy();
+        savingChart = new Chart(document.getElementById('chartSaving'), { 
+            type: 'pie', 
+            data: { 
+                labels: ['Refki', 'Intan'], 
+                datasets: [{ 
+                    data: dataAdd, 
+                    backgroundColor: hasAdd ? ['#6a11cb', '#ff7eb9'] : ['#444', '#555'] 
+                }] 
+            }, 
+            options: commonOptions 
+        });
+        if(expenseChart) expenseChart.destroy();
+        expenseChart = new Chart(document.getElementById('chartExpense'), { 
+            type: 'pie', 
+            data: { 
+                labels: ['Refki', 'Intan'], 
+                datasets: [{ 
+                    data: dataDraw, 
+                    backgroundColor: hasDraw ? ['#e74c3c', '#f39c12'] : ['#444', '#555'] 
+                }] 
+            }, 
+            options: commonOptions 
+        });
+    }
+    function updateUI(data) {
+        let saldo=0, tin=0, tout=0, addR=0, addI=0, drawR=0, drawI=0, html='';
+        data.forEach(row => {
+            const val = parseInt(row[3]) || 0;
+            if (row[2] === "Masuk") { 
+                tin += val; 
+                row[1] === "Refki" ? addR += val : addI += val; 
+            } else { 
+                tout += val; 
+                row[1] === "Refki" ? drawR += val : drawI += val; 
+            }
+        });
+        saldo = tin - tout;
+        document.getElementById('total-saldo').innerText = formatR(saldo);
+        document.getElementById('add-refki').innerText = formatR(addR);
+        document.getElementById('add-intan').innerText = formatR(addI);
+        document.getElementById('draw-refki').innerText = formatR(drawR);
+        document.getElementById('draw-intan').innerText = formatR(drawI);
+        document.getElementById('total-all-in').innerText = formatR(tin);
+        document.getElementById('total-all-out').innerText = formatR(tout);
+        createCharts(addR, addI, drawR, drawI);
+        document.getElementById('txt-target-name').innerHTML = `Tujuan: <span style="color: #ff7eb9;">${GLOBAL_SETTINGS.tujuan}</span>`;
+        document.getElementById('txt-target-nominal').innerText = formatR(GLOBAL_SETTINGS.nominal);
+        const pct = Math.min((saldo / GLOBAL_SETTINGS.nominal) * 100, 100).toFixed(1);
+        document.getElementById('bar-progress').style.width = pct + "%";
+        document.getElementById('txt-percent').innerText = pct + "%";
+        const needed = GLOBAL_SETTINGS.nominal - saldo;
+        const txtNeeded = document.getElementById('txt-needed-amt');
+        txtNeeded.innerText = needed > 0 ? "Kurang " + formatR(needed) + " lagi" : "🏆 Target Tercapai!";
+        txtNeeded.style.color = needed > 0 ? "#e74c3c" : "#2ecc71";
+        const days = Math.ceil((new Date(GLOBAL_SETTINGS.tanggal) - new Date().setHours(0,0,0,0)) / 86400000);
+        document.getElementById('txt-days-left').innerText = days >= 0 ? `Sisa ${days} Hari` : "Waktu Habis";
+        data.slice().reverse().forEach(row => {
+            html += `<div class="history-item ${row[2] === 'Masuk' ? 'type-masuk' : 'type-keluar'}">
+                <div style="font-size:0.8em"><strong>${row[4]}</strong><br>${row[1]} • ${row[0]}</div>
+                <div style="font-weight:600; color:${row[2] === 'Masuk' ? '#2ecc71' : '#e74c3c'}">
+                    ${row[2] === 'Masuk' ? '+' : '-'} ${formatR(row[3])}
+                </div>
+            </div>`;
+        });
+        document.getElementById('history-list').innerHTML = html;
+    }
+    async function processData(tipe) {
+        const amount = document.getElementById('amount').value;
+        const note = document.getElementById('note').value;
+        if (!amount || !note) return alert("Isi data!");
+        showLoader("Mencatat...");
+        const opsi = { day: 'numeric', month: 'long', year: 'numeric' };
+        const tgl = new Date().toLocaleDateString('id-ID', opsi);
+        const jam = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+        const formatTgl = `${tgl}, ${jam} WIB`;
+        const payload = { 
+            tanggal: formatTgl, 
+            nama: document.getElementById('user').value, 
+            tipe: tipe, 
+            jumlah: parseInt(amount), 
+            alasan: note 
+        };
+        await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        location.reload();
+    }
+    async function uploadToImgBB(file) {
+    const apiKey = "69081c3fd0c1d9840c269a5b8f897c7b";
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // Kita gunakan parameter 'expiration' jika ingin otomatis hapus, 
+    // tapi karena permintaanmu "jangan hapus otomatis", kita biarkan default (permanen).
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+    
+    if (data.success) {
+        // Pastikan mengambil 'display_url' agar mendapatkan Direct Link yang valid untuk CSS background
+        return data.data.display_url; 
+    } else {
+        throw new Error("Gagal upload ke ImgBB: " + data.error.message);
+    }
+}
+
+async function saveSettings() {
+    const fileInput = document.getElementById('set-bg-file');
+    let backgroundUrl = GLOBAL_SETTINGS.background; 
+
+    showLoader("Memproses...");
+
+    try {
+        if (fileInput.files && fileInput.files[0]) {
+            document.getElementById('loader-text').innerText = "Mengunggah Foto...";
+            // Mendapatkan direct link foto
+            backgroundUrl = await uploadToImgBB(fileInput.files[0]);
+            console.log("Link Foto Baru:", backgroundUrl); // Cek di console linknya pasti .jpg/.png
+        }
+
+        const payload = { 
+            action: "updateSettings", 
+            tujuan: document.getElementById('set-target-name').value, 
+            nominal: parseInt(document.getElementById('set-target-amt').value), 
+            tanggal: document.getElementById('set-target-date').value, 
+            pin: document.getElementById('set-pin').value,
+            background: backgroundUrl 
+        };
+
+        document.getElementById('loader-text').innerText = "Menyimpan ke Database...";
+        await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        
+        // Refresh untuk melihat perubahan
+        location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+        document.getElementById('loader').style.display = "none";
+    }
+}
+
+    function toggleSettings() {
+        const modal = document.getElementById('modalSettings');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        if(modal.style.display === 'flex') {
+            document.getElementById('set-target-name').value = GLOBAL_SETTINGS.tujuan;
+            document.getElementById('set-target-amt').value = GLOBAL_SETTINGS.nominal;
+            document.getElementById('set-target-date').value = GLOBAL_SETTINGS.tanggal;
+            document.getElementById('set-pin').value = GLOBAL_SETTINGS.pin;
+            document.getElementById('set-bg-url').value = GLOBAL_SETTINGS.background || "";
+        }
+    }
+    function formatR(v) { return "Rp " + (v || 0).toLocaleString('id-ID'); }
+    function showLoader(t) { 
+        document.getElementById('loader').style.display = "flex"; 
+        document.getElementById('loader-text').innerText = t; 
+    }
+    function copyNorek() {
+        const icon = event.currentTarget;
+        navigator.clipboard.writeText('770074748888').then(() => {
+            icon.classList.remove('fa-regular', 'fa-copy');
+            icon.classList.add('fa-solid', 'fa-check', 'copy-success');
+            icon.style.color = 'var(--secondary)';
+            setTimeout(() => {
+                icon.classList.remove('fa-solid', 'fa-check', 'copy-success', 'bounceIn');
+                icon.classList.add('fa-regular', 'fa-copy');
+                icon.style.color = 'var(--primary)';
+            }, 2000);
+        }).catch(err => {
+            console.error('Gagal menyalin: ', err);
+        });
+    }
+    init();
+</script>
+</body>
+</html>
