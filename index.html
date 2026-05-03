@@ -165,7 +165,12 @@
         <div class="form-group"><label>Nominal Target</label><span class="input"><input type="number" id="set-target-amt"><span></span></span></div>
         <div class="form-group"><label>Tanggal Target</label><span class="input"><input type="date" id="set-target-date"><span></span></span></div>
         <div class="form-group"><label>PIN Keamanan</label><span class="input"><input type="number" id="set-pin"><span></span></span></div>
-        <div class="form-group"><label>URL Background (.jpg / .png)</label><span class="input"><input type="text" id="set-bg-url"><span></span></span></div>
+        <div class="form-group">
+    <label>Background</label>
+    <span class="input">
+        <input type="file" id="set-bg-file" accept="image/*">
+        <span></span>
+    </span>
         <button class="btn-save" onclick="saveSettings()">Simpan</button>
         <button class="btn-close" onclick="toggleSettings()">Tutup</button>
     </div>
@@ -345,19 +350,62 @@
         await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         location.reload();
     }
-    async function saveSettings() {
+    async function uploadToImgBB(file) {
+    const apiKey = "69081c3fd0c1d9840c269a5b8f897c7b";
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // Kita gunakan parameter 'expiration' jika ingin otomatis hapus, 
+    // tapi karena permintaanmu "jangan hapus otomatis", kita biarkan default (permanen).
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+    
+    if (data.success) {
+        // Pastikan mengambil 'display_url' agar mendapatkan Direct Link yang valid untuk CSS background
+        return data.data.display_url; 
+    } else {
+        throw new Error("Gagal upload ke ImgBB: " + data.error.message);
+    }
+}
+
+async function saveSettings() {
+    const fileInput = document.getElementById('set-bg-file');
+    let backgroundUrl = GLOBAL_SETTINGS.background; 
+
+    showLoader("Memproses...");
+
+    try {
+        if (fileInput.files && fileInput.files[0]) {
+            document.getElementById('loader-text').innerText = "Mengunggah Foto...";
+            // Mendapatkan direct link foto
+            backgroundUrl = await uploadToImgBB(fileInput.files[0]);
+            console.log("Link Foto Baru:", backgroundUrl); // Cek di console linknya pasti .jpg/.png
+        }
+
         const payload = { 
             action: "updateSettings", 
             tujuan: document.getElementById('set-target-name').value, 
             nominal: parseInt(document.getElementById('set-target-amt').value), 
             tanggal: document.getElementById('set-target-date').value, 
             pin: document.getElementById('set-pin').value,
-            background: document.getElementById('set-bg-url').value 
+            background: backgroundUrl 
         };
-        showLoader("Menyimpan...");
+
+        document.getElementById('loader-text').innerText = "Menyimpan ke Database...";
         await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        
+        // Refresh untuk melihat perubahan
         location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+        document.getElementById('loader').style.display = "none";
     }
+}
     function toggleSettings() {
         const modal = document.getElementById('modalSettings');
         modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
